@@ -1,0 +1,44 @@
+---
+# Main Traefik service - this is what Cloudflare Tunnel connects to
+# Referenced as: traefik.traefik.svc.cluster.local
+#                ^^^^^^^ ^^^^^^^ ^^^ ^^^^^^^^^^^^
+#                |       |       |   |
+#                |       |       |   Cluster domain suffix
+#                |       |       Kubernetes service indicator
+#                |       Namespace name
+#                Service name
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik
+  namespace: traefik
+  labels:
+    app.kubernetes.io/name: traefik
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: traefik
+  ports:
+    - name: web
+      port: 80
+      targetPort: web
+    - name: websecure
+      port: 443
+      targetPort: websecure
+---
+# Dashboard service (internal only)
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-dashboard
+  namespace: traefik
+  labels:
+    app.kubernetes.io/name: traefik
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: traefik
+  ports:
+    - name: traefik
+      port: 8080
+      targetPort: traefik

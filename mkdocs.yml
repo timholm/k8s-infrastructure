@@ -1,0 +1,66 @@
+site_name: K8s Infrastructure
+site_url: https://docs.holm.chat
+site_description: GitOps documentation for Kubernetes infrastructure
+repo_url: https://github.com/timholm/k8s-infrastructure
+repo_name: timholm/k8s-infrastructure
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+
+nav:
+  - Home: index.md
+  - Architecture:
+      - Overview: architecture/overview.md
+      - Kubernetes DNS: architecture/kubernetes-dns.md
+      - Traffic Flow: architecture/traffic-flow.md
+  - Components:
+      - ArgoCD: components/argocd.md
+      - Traefik: components/traefik.md
+      - Cloudflare Tunnel: components/cloudflare-tunnel.md
+  - Environments:
+      - Overview: environments/overview.md
+      - Development: environments/dev.md
+      - Staging: environments/staging.md
+      - Production: environments/prod.md
+  - Operations:
+      - Bootstrap: operations/bootstrap.md
+      - Adding Applications: operations/adding-apps.md
+      - Documentation Site: operations/documentation.md
+      - Troubleshooting: operations/troubleshooting.md

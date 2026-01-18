@@ -2,69 +2,77 @@
 
 GitOps repository for Kubernetes infrastructure managed by ArgoCD.
 
+| Service | URL |
+|---------|-----|
+| Documentation | [docs.holm.chat](https://docs.holm.chat) |
+| ArgoCD | [dev.holm.chat/argo](https://dev.holm.chat/argo) |
+
+## Quick Start
+
+```bash
+# 1. Create Cloudflare Tunnel secret
+kubectl create namespace cloudflare
+kubectl create secret generic cloudflare-tunnel-token \
+  --from-literal=token=<your-token> -n cloudflare
+
+# 2. Bootstrap everything
+kubectl apply -k argocd/bootstrap/
+```
+
+See the [full bootstrap guide](https://docs.holm.chat/operations/bootstrap/) for details.
+
 ## Repository Structure
 
 ```
 .
 ├── argocd/
 │   ├── bootstrap/          # ArgoCD installation and app-of-apps
-│   └── projects/           # ArgoCD project definitions
+│   │   └── ingress/        # Traefik IngressRoute for ArgoCD
+│   └── projects/           # ArgoCD Applications per environment
 ├── base/
-│   ├── apps/               # Base application manifests
 │   └── infrastructure/     # Base infrastructure components
-└── environments/
-    ├── dev/                # Development environment
-    ├── staging/            # Staging environment
-    └── prod/               # Production environment
+│       ├── traefik/        # Ingress controller
+│       ├── cloudflare-tunnel/  # External access
+│       ├── namespace/      # Resource quotas & limits
+│       └── network-policies/
+├── environments/
+│   ├── dev/                # Auto-sync enabled
+│   ├── staging/            # Auto-sync enabled
+│   └── prod/               # Manual sync required
+└── docs/                   # MkDocs documentation
 ```
 
-## Getting Started
+## Components
 
-### Prerequisites
+| Component | Purpose |
+|-----------|---------|
+| **ArgoCD** | GitOps continuous delivery |
+| **Traefik** | Ingress controller & reverse proxy |
+| **Cloudflare Tunnel** | Secure external access (no public IPs) |
 
-- Kubernetes cluster
-- `kubectl` configured
-- `argocd` CLI (optional)
+## Documentation
 
-### Bootstrap ArgoCD
+Full documentation is available at [docs.holm.chat](https://docs.holm.chat):
 
-1. Install ArgoCD in your cluster:
-
-```bash
-kubectl create namespace argocd
-kubectl apply -n argocd -f argocd/bootstrap/install.yaml
-```
-
-2. Deploy the app-of-apps to bootstrap all applications:
-
-```bash
-kubectl apply -f argocd/bootstrap/app-of-apps.yaml
-```
-
-### Access ArgoCD UI
-
-```bash
-# Get the initial admin password
-kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-
-# Port-forward to access the UI
-kubectl port-forward svc/argocd-server -n argocd 8080:443
-```
-
-Then open https://localhost:8080 and login with username `admin`.
+- [Architecture Overview](https://docs.holm.chat/architecture/overview/)
+- [Kubernetes DNS Explained](https://docs.holm.chat/architecture/kubernetes-dns/) - Why `traefik.traefik`?
+- [Traffic Flow](https://docs.holm.chat/architecture/traffic-flow/)
+- [Bootstrap Guide](https://docs.holm.chat/operations/bootstrap/)
+- [Adding Applications](https://docs.holm.chat/operations/adding-apps/)
+- [Troubleshooting](https://docs.holm.chat/operations/troubleshooting/)
 
 ## Environment Promotion
 
-Changes flow through environments:
-1. **dev** - Development and testing
-2. **staging** - Pre-production validation
-3. **prod** - Production deployment
+| Environment | Namespace | Auto Sync | Notes |
+|-------------|-----------|-----------|-------|
+| dev | `dev` | ✅ | Fast feedback |
+| staging | `staging` | ✅ | Pre-prod validation |
+| prod | `prod` | ❌ | Manual approval required |
 
-Each environment uses Kustomize overlays on top of base manifests.
+## Local Docs Development
 
-## Adding New Infrastructure
-
-1. Add base manifests to `base/infrastructure/<component>/`
-2. Create kustomization.yaml referencing the base
-3. Add environment-specific patches in `environments/<env>/infrastructure/`
-4. Update the ArgoCD Application in `argocd/projects/`
+```bash
+pip install mkdocs-material pymdown-extensions
+mkdocs serve
+# Open http://127.0.0.1:8000
+```

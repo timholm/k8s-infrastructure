@@ -1,0 +1,8 @@
+---
+# Traefik CRDs - IngressRoute, Middleware, etc.
+# These enable Traefik-specific routing features beyond standard Kubernetes Ingress
+#
+# Full CRDs available at:
+# https://raw.githubusercontent.com/traefik/traefik/v3.0/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+#
+# For simplicity, we reference the upstream CRDs via kustomization.yaml
