@@ -25,6 +25,10 @@ metadata:
     app.kubernetes.io/name: argocd-cm
     app.kubernetes.io/part-of: argocd
 data:
+  # External URL configuration for path-based routing
+  url: https://dev.holm.chat/argo
+  server.rootpath: /argo
+
   # Repository credentials template
   # Add your repository configurations here
 

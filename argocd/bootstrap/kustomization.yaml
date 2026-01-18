@@ -9,3 +9,4 @@ resources:
   # Custom configurations
   - install.yaml
   - app-of-apps.yaml
+  - ingress/
