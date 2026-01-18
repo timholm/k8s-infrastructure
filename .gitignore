@@ -1,0 +1,22 @@
+# Secrets - never commit actual secrets
+*.secret.yaml
+*-secret.yaml
+secrets/
+
+# Local configuration
+.envrc
+.env
+*.local.yaml
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.bak

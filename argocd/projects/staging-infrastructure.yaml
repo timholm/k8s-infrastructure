@@ -1,0 +1,33 @@
+---
+# Staging Environment Infrastructure Application
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: staging-infrastructure
+  namespace: argocd
+  labels:
+    environment: staging
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infrastructure
+  source:
+    repoURL: https://github.com/timholm/k8s-infrastructure.git
+    targetRevision: main
+    path: environments/staging/infrastructure
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

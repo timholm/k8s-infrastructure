@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: prod
+
+resources:
+  - ../../../base/infrastructure
+
+commonLabels:
+  environment: prod
+
+patches:
+  # Production gets higher limits
+  - patch: |-
+      - op: replace
+        path: /spec/hard/requests.cpu
+        value: "16"
+      - op: replace
+        path: /spec/hard/requests.memory
+        value: 32Gi
+      - op: replace
+        path: /spec/hard/limits.cpu
+        value: "32"
+      - op: replace
+        path: /spec/hard/limits.memory
+        value: 64Gi
+      - op: replace
+        path: /spec/hard/pods
+        value: "100"
+    target:
+      kind: ResourceQuota
+      name: default-quota

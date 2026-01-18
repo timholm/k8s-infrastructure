@@ -1,0 +1,39 @@
+---
+# ArgoCD Project for Infrastructure
+# Defines permissions and allowed resources for infrastructure apps
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: infrastructure
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: Infrastructure components managed by GitOps
+
+  # Source repositories
+  sourceRepos:
+    - https://github.com/timholm/k8s-infrastructure.git
+    - https://charts.bitnami.com/bitnami
+    - https://prometheus-community.github.io/helm-charts
+    - https://grafana.github.io/helm-charts
+    - https://kubernetes.github.io/ingress-nginx
+
+  # Destination clusters and namespaces
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+
+  # Allowed cluster-scoped resources
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  # Namespace-scoped resources
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  # Orphaned resource monitoring
+  orphanedResources:
+    warn: true
