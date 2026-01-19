@@ -11,7 +11,7 @@ spec:
     - web
     - websecure
   routes:
-    - match: Host(`dev.holm.chat`) && PathPrefix(`/argoCD`)
+    - match: PathPrefix(`/argoCD`)
       kind: Rule
       services:
         - name: argocd-server

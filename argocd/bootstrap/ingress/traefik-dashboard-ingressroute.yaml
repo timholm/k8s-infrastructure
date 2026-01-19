@@ -11,7 +11,7 @@ spec:
     - web
     - websecure
   routes:
-    - match: Host(`dev.holm.chat`) && PathPrefix(`/traefik`)
+    - match: PathPrefix(`/traefik`)
       kind: Rule
       services:
         - name: traefik
