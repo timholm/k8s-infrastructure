@@ -5,7 +5,10 @@ GitOps repository for Kubernetes infrastructure managed by ArgoCD.
 | Service | URL |
 |---------|-----|
 | Documentation | [docs.holm.chat](https://docs.holm.chat) |
-| ArgoCD | [dev.holm.chat/argo](https://dev.holm.chat/argo) |
+| ArgoCD | [dev.holm.chat/argoCD](https://dev.holm.chat/argoCD) |
+| Argo Workflows | [dev.holm.chat/argo-workflows](https://dev.holm.chat/argo-workflows) |
+| Traefik | [dev.holm.chat/traefik](https://dev.holm.chat/traefik) |
+| Velero | [dev.holm.chat/backup](https://dev.holm.chat/backup) |
 
 ## Quick Start
 

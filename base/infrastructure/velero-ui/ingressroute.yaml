@@ -1,0 +1,31 @@
+---
+# Traefik IngressRoute for Velero UI
+# Accessible at https://dev.holm.chat/backup/
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: velero-ui
+  namespace: velero
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`dev.holm.chat`) && PathPrefix(`/backup`)
+      kind: Rule
+      services:
+        - name: velero-ui
+          port: 80
+      middlewares:
+        - name: velero-stripprefix
+---
+# Strip /backup prefix before forwarding to Velero UI
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: velero-stripprefix
+  namespace: velero
+spec:
+  stripPrefix:
+    prefixes:
+      - /backup

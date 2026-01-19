@@ -7,3 +7,5 @@ resources:
   - traefik
   - cloudflare-tunnel
   - argo-workflows
+  - velero
+  - velero-ui

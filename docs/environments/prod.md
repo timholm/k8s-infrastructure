@@ -27,7 +27,7 @@ Production deployments require explicit action:
 
 === "ArgoCD UI"
 
-    1. Navigate to [dev.holm.chat/argo](https://dev.holm.chat/argo)
+    1. Navigate to [dev.holm.chat/argoCD](https://dev.holm.chat/argoCD)
     2. Find `prod-infrastructure` application
     3. Click **Sync**
     4. Review changes

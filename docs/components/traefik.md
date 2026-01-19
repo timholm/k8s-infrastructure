@@ -9,6 +9,7 @@ Traefik is the ingress controller that routes external traffic to services withi
 | Namespace | `traefik` |
 | Version | v3.0 |
 | Service | `traefik.traefik.svc.cluster.local` |
+| NodePort | `30190` (local access) |
 
 ## Why Traefik?
 
@@ -104,14 +105,14 @@ Removes path prefix before forwarding:
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: strip-argo
+  name: strip-argocd
 spec:
   stripPrefix:
     prefixes:
-      - /argo
+      - /argoCD
 ```
 
-`/argo/applications` → `/applications`
+`/argoCD/applications` → `/applications`
 
 ### Headers
 
@@ -148,6 +149,23 @@ args:
   - --providers.kubernetescrd
   - --providers.kubernetescrd.allowCrossNamespace=true
 ```
+
+## Local Access
+
+Traefik exposes NodePort 30190 for local network access without Cloudflare:
+
+```
+http://192.168.8.197:30190/[path]
+```
+
+Local access URLs:
+
+| Service | URL |
+|---------|-----|
+| ArgoCD | `http://192.168.8.197:30190/argoCD` |
+| Traefik Dashboard | `http://192.168.8.197:30190/traefik` |
+| Argo Workflows | `http://192.168.8.197:30190/argo-workflows` |
+| Velero/Backup | `http://192.168.8.197:30190/backup` |
 
 ## Files
 

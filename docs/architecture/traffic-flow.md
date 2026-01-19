@@ -2,6 +2,13 @@
 
 This document details how traffic flows from the internet to your applications.
 
+## Access Methods
+
+| Method | URL Pattern | Use Case |
+|--------|-------------|----------|
+| Cloudflare Tunnel | `https://dev.holm.chat/[path]` | External/remote access |
+| Local NodePort | `http://192.168.8.197:30190/[path]` | Local network access |
+
 ## External Access via Cloudflare Tunnel
 
 ```mermaid
@@ -49,9 +56,35 @@ Multiple services share one domain:
 | `dev.holm.chat/traefik` | Traefik Dashboard |
 | `dev.holm.chat/` | Default application |
 
+## Local Access via NodePort
+
+For local network access, Traefik exposes NodePort 30190:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Traefik as Traefik NodePort :30190
+    participant ArgoCD
+
+    User->>Traefik: GET http://192.168.8.197:30190/argoCD
+    Note over Traefik: Match IngressRoute<br/>Strip /argoCD prefix
+    Traefik->>ArgoCD: https://argocd-server:443/
+    ArgoCD->>Traefik: Response
+    Traefik->>User: Response
+```
+
+Local access URLs:
+
+| Service | Local URL |
+|---------|-----------|
+| ArgoCD | `http://192.168.8.197:30190/argoCD` |
+| Traefik Dashboard | `http://192.168.8.197:30190/traefik` |
+| Argo Workflows | `http://192.168.8.197:30190/argo-workflows` |
+| Velero/Backup | `http://192.168.8.197:30190/backup` |
+
 ## Traefik IngressRoute
 
-Traefik uses `IngressRoute` CRDs for advanced routing:
+Traefik uses `IngressRoute` CRDs for advanced routing. IngressRoutes use **PathPrefix-only matching** (no Host requirement), enabling both external access via Cloudflare and local access via NodePort:
 
 ```yaml
 apiVersion: traefik.io/v1alpha1
@@ -61,22 +94,22 @@ metadata:
   namespace: argocd
 spec:
   entryPoints:
-    - websecure
+    - web
   routes:
-    - match: Host(`dev.holm.chat`) && PathPrefix(`/argo`)
+    - match: PathPrefix(`/argoCD`)
       kind: Rule
       services:
         - name: argocd-server
           port: 443
       middlewares:
-        - name: argocd-stripprefix  # Remove /argo before forwarding
+        - name: argocd-stripprefix  # Remove /argoCD before forwarding
 ```
 
 ### Middleware Chain
 
 ```mermaid
 graph LR
-    Request["/argo/applications"] --> Strip[stripPrefix<br/>Remove /argo]
+    Request["/argoCD/applications"] --> Strip[stripPrefix<br/>Remove /argoCD]
     Strip --> Headers[headers<br/>Add X-Forwarded-Proto]
     Headers --> Service["/applications"]
 ```

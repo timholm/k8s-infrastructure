@@ -61,6 +61,7 @@ nav:
       - Production: environments/prod.md
   - Operations:
       - Bootstrap: operations/bootstrap.md
+      - Deployment Guide: operations/deployment-guide.md
       - Adding Applications: operations/adding-apps.md
       - Documentation Site: operations/documentation.md
       - Troubleshooting: operations/troubleshooting.md

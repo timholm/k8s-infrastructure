@@ -5,3 +5,4 @@ resources:
   - ingressroute.yaml
   - traefik-dashboard-ingressroute.yaml
   - argo-workflows-ingressroute.yaml
+  - velero-ingressroute.yaml

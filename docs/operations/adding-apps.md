@@ -122,7 +122,7 @@ git push
 
 ArgoCD will automatically detect the change:
 
-1. Open [dev.holm.chat/argo](https://dev.holm.chat/argo)
+1. Open [dev.holm.chat/argoCD](https://dev.holm.chat/argoCD)
 2. Find `dev-infrastructure` application
 3. Watch it sync automatically (or click Sync for prod)
 

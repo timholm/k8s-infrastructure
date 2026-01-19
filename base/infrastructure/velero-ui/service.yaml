@@ -1,0 +1,17 @@
+---
+# Velero UI service
+apiVersion: v1
+kind: Service
+metadata:
+  name: velero-ui
+  namespace: velero
+  labels:
+    app.kubernetes.io/name: velero-ui
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: velero-ui
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
