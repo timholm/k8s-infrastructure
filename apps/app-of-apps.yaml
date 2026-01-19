@@ -1,0 +1,24 @@
+---
+# App of Apps - manages all ArgoCD Applications
+# This is the only Application that needs to be manually applied
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/timholm/k8s-infrastructure
+    targetRevision: HEAD
+    path: apps
+    directory:
+      recurse: true
+      include: '*.yaml'
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

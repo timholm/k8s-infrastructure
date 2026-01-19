@@ -1,0 +1,25 @@
+---
+# ArgoCD Application that manages ArgoCD itself
+# Uses upstream manifests (via kustomize remote base) with our config overlays
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/timholm/k8s-infrastructure
+    targetRevision: HEAD
+    path: config/argocd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

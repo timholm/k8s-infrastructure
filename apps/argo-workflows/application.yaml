@@ -1,0 +1,23 @@
+---
+# Argo Workflows Application
+# Uses upstream manifests with our config overlays
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-workflows
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/timholm/k8s-infrastructure
+    targetRevision: HEAD
+    path: config/argo-workflows
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
