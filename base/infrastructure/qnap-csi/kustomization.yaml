@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # QNAP CSI CRDs
+  - https://github.com/qnap-dev/QNAP-CSI-PlugIn//Deploy/crds?ref=v1.5.2
+  # QNAP CSI Trident operator and orchestrator
+  - https://github.com/qnap-dev/QNAP-CSI-PlugIn//Deploy/Trident?ref=v1.5.2

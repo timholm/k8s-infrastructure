@@ -1,21 +1,24 @@
 ---
-# Traefik Config Application
-# Traefik itself is managed by k3s, this just manages our IngressRoutes
+# Argo Rollouts Application
+# Progressive delivery with Gateway API plugin for canary deployments
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: traefik-config
+  name: argo-rollouts
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/timholm/k8s-infrastructure
     targetRevision: HEAD
-    path: config/traefik
+    path: base/infrastructure/argo-rollouts
   destination:
     server: https://kubernetes.default.svc
-    namespace: kube-system
+    namespace: argo-rollouts
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

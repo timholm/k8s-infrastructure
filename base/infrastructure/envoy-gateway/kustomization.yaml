@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # Envoy Gateway installation (includes Gateway API CRDs and namespace)
+  - https://github.com/envoyproxy/gateway/releases/download/v1.2.2/install.yaml
+  # Gateway and HTTPRoutes
+  - gateway.yaml
+  - httproutes/

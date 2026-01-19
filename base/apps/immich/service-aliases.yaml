@@ -1,0 +1,28 @@
+---
+# Service alias for Immich chart which expects 'database' hostname
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: immich
+spec:
+  type: ExternalName
+  externalName: immich-postgres.immich.svc.cluster.local
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+---
+# Service alias for Immich v0.10+ chart which expects 'immich-valkey' hostname
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-valkey
+  namespace: immich
+spec:
+  type: ExternalName
+  externalName: immich-redis-master.immich.svc.cluster.local
+  ports:
+  - port: 6379
+    targetPort: 6379
+    protocol: TCP

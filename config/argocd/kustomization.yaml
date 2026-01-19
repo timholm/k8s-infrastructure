@@ -4,9 +4,9 @@ kind: Kustomization
 namespace: argocd
 
 # Reference upstream ArgoCD directly - stays up to date
+# Note: Ingress routing is now handled by Envoy Gateway HTTPRoutes
 resources:
   - https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml
-  - ingress/
 
 # Our config patches
 patches:

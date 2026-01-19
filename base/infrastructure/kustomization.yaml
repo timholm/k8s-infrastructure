@@ -4,8 +4,10 @@ kind: Kustomization
 resources:
   - namespace
   - network-policies
-  - traefik
+  - envoy-gateway
+  - argo-rollouts
   - cloudflare-tunnel
   - argo-workflows
   - velero
   - velero-ui
+  - qnap-csi

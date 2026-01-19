@@ -7,5 +7,5 @@ namespace: argo
 resources:
   - https://github.com/argoproj/argo-workflows/releases/download/v3.5.0/install.yaml
   - namespace.yaml
-  - ingressroute.yaml
   - service-nodeport.yaml
+  # Note: Ingress routing is now handled by Envoy Gateway HTTPRoutes

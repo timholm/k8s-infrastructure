@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - service.yaml
-  - ingressroute.yaml
+  # Note: Ingress routing is now handled by Envoy Gateway HTTPRoutes

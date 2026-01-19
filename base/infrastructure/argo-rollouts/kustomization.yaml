@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: argo-rollouts
+
+resources:
+  - namespace.yaml
+  # Argo Rollouts installation
+  - https://github.com/argoproj/argo-rollouts/releases/download/v1.7.2/install.yaml
+
+# Patch the ConfigMap to add Gateway API plugin
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: argo-rollouts-config
+      data:
+        trafficRouterPlugins: |-
+          - name: "argoproj-labs/gatewayAPI"
+            location: "https://github.com/argoproj-labs/rollouts-plugin-trafficrouter-gatewayapi/releases/download/v0.5.0/gateway-api-plugin-linux-amd64"

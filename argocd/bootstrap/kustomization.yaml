@@ -10,8 +10,7 @@ resources:
   - install.yaml
   # App-of-apps
   - app-of-apps.yaml
-  # Ingress
-  - ingress/
+  # Note: Ingress routing is now handled by Envoy Gateway HTTPRoutes
 
 # Patch the ConfigMaps from upstream
 patches:

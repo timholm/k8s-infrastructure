@@ -4,6 +4,22 @@ kind: Namespace
 metadata:
   name: cloudflare
 ---
+# Cloudflare Tunnel configuration
+# Routes all traffic to Envoy Gateway
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared-config
+  namespace: cloudflare
+data:
+  config.yaml: |
+    tunnel: holm-tunnel
+    credentials-file: /etc/cloudflared/credentials.json
+    ingress:
+      # Route all traffic to Envoy Gateway proxy service
+      # Envoy Gateway creates this service for the main-gateway Gateway resource
+      - service: http://envoy-envoy-gateway-system-main-gateway.envoy-gateway-system.svc.cluster.local:80
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,15 +41,18 @@ spec:
           args:
             - tunnel
             - --no-autoupdate
+            - --config
+            - /etc/cloudflared/config.yaml
             - run
-            - --token
-            - $(TUNNEL_TOKEN)
-          env:
-            - name: TUNNEL_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: cloudflare-tunnel-token
-                  key: token
+          volumeMounts:
+            - name: config
+              mountPath: /etc/cloudflared/config.yaml
+              subPath: config.yaml
+              readOnly: true
+            - name: credentials
+              mountPath: /etc/cloudflared/credentials.json
+              subPath: credentials.json
+              readOnly: true
           resources:
             requests:
               cpu: 10m
@@ -44,25 +63,35 @@ spec:
           livenessProbe:
             httpGet:
               path: /ready
-              port: 20241
+              port: 2000
             initialDelaySeconds: 10
             periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /ready
-              port: 20241
+              port: 2000
             initialDelaySeconds: 5
             periodSeconds: 5
+      volumes:
+        - name: config
+          configMap:
+            name: cloudflared-config
+        - name: credentials
+          secret:
+            secretName: cloudflare-tunnel-credentials
 ---
-# Create this secret manually with your tunnel token:
-# kubectl create secret generic cloudflare-tunnel-token \
-#   --from-literal=token=<your-tunnel-token> \
+# Create this secret with your tunnel credentials:
+# kubectl create secret generic cloudflare-tunnel-credentials \
+#   --from-file=credentials.json=/path/to/credentials.json \
 #   -n cloudflare
+#
+# Get credentials.json by running: cloudflared tunnel create holm-tunnel
 apiVersion: v1
 kind: Secret
 metadata:
-  name: cloudflare-tunnel-token
+  name: cloudflare-tunnel-credentials
   namespace: cloudflare
 type: Opaque
 stringData:
-  token: "REPLACE_WITH_YOUR_TUNNEL_TOKEN"
+  credentials.json: |
+    {"AccountTag":"REPLACE","TunnelSecret":"REPLACE","TunnelID":"REPLACE"}
