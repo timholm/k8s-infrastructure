@@ -1,0 +1,15 @@
+# Patch for argocd-rbac-cm ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+data:
+  policy.default: role:readonly
+  policy.csv: |
+    # Grant admin access to admin group
+    g, admin, role:admin
+    # Grant read-only access to developers
+    p, role:developer, applications, get, */*, allow
+    p, role:developer, applications, sync, */*, allow
+    p, role:developer, logs, get, */*, allow

@@ -3,3 +3,5 @@ kind: Kustomization
 
 resources:
   - ingressroute.yaml
+  - traefik-dashboard-ingressroute.yaml
+  - argo-workflows-ingressroute.yaml

@@ -1,0 +1,77 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: velero
+  namespace: velero
+  labels:
+    app.kubernetes.io/name: velero
+    component: velero
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: velero
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: velero
+        component: velero
+    spec:
+      serviceAccountName: velero
+      containers:
+        - name: velero
+          image: velero/velero:latest
+          command:
+            - /velero
+          args:
+            - server
+            - --features=EnableCSI
+          ports:
+            - name: metrics
+              containerPort: 8085
+          env:
+            - name: VELERO_SCRATCH_DIR
+              value: /scratch
+            - name: VELERO_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: LD_LIBRARY_PATH
+              value: /plugins
+          volumeMounts:
+            - name: plugins
+              mountPath: /plugins
+            - name: scratch
+              mountPath: /scratch
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 8085
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 8085
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: plugins
+          emptyDir: {}
+        - name: scratch
+          emptyDir: {}

@@ -6,7 +6,14 @@ namespace: argocd
 resources:
   # Install ArgoCD from upstream
   - https://raw.githubusercontent.com/argoproj/argo-cd/v2.9.3/manifests/install.yaml
-  # Custom configurations
+  # Namespace
   - install.yaml
+  # App-of-apps
   - app-of-apps.yaml
+  # Ingress
   - ingress/
+
+# Patch the ConfigMaps from upstream
+patches:
+  - path: patches/argocd-cm.yaml
+  - path: patches/argocd-rbac-cm.yaml

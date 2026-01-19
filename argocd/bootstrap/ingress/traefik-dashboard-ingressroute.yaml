@@ -1,0 +1,31 @@
+---
+# Traefik IngressRoute for Traefik Dashboard
+# Accessible at https://dev.holm.chat/traefik/
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-dashboard
+  namespace: kube-system
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`dev.holm.chat`) && PathPrefix(`/traefik`)
+      kind: Rule
+      services:
+        - name: traefik
+          port: 8080
+      middlewares:
+        - name: traefik-stripprefix
+---
+# Strip /traefik prefix before forwarding to Traefik Dashboard
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: traefik-stripprefix
+  namespace: kube-system
+spec:
+  stripPrefix:
+    prefixes:
+      - /traefik

@@ -39,6 +39,6 @@ k8s-infrastructure/
 
 | Component | Purpose | URL |
 |-----------|---------|-----|
-| ArgoCD | GitOps continuous delivery | [dev.holm.chat/argo](https://dev.holm.chat/argo) |
+| ArgoCD | GitOps continuous delivery | [dev.holm.chat/argoCD](https://dev.holm.chat/argoCD) |
 | Traefik | Ingress controller & reverse proxy | Internal |
 | Cloudflare Tunnel | Secure external access | - |

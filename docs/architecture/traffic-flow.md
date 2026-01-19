@@ -12,10 +12,10 @@ sequenceDiagram
     participant Traefik
     participant ArgoCD
 
-    User->>Cloudflare: GET https://dev.holm.chat/argo
+    User->>Cloudflare: GET https://dev.holm.chat/argoCD
     Cloudflare->>Tunnel: Forward via Tunnel
-    Tunnel->>Traefik: http://traefik.traefik:80/argo
-    Note over Traefik: Match IngressRoute<br/>Strip /argo prefix
+    Tunnel->>Traefik: http://traefik.traefik:80/argoCD
+    Note over Traefik: Match IngressRoute<br/>Strip /argoCD prefix
     Traefik->>ArgoCD: https://argocd-server:443/
     ArgoCD->>Traefik: Response
     Traefik->>Tunnel: Response
@@ -45,7 +45,7 @@ Multiple services share one domain:
 
 | URL | Service |
 |-----|---------|
-| `dev.holm.chat/argo` | ArgoCD |
+| `dev.holm.chat/argoCD` | ArgoCD |
 | `dev.holm.chat/traefik` | Traefik Dashboard |
 | `dev.holm.chat/` | Default application |
 

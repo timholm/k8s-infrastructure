@@ -72,7 +72,7 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 
 Once the tunnel is connected:
 
-- URL: [https://dev.holm.chat/argo](https://dev.holm.chat/argo)
+- URL: [https://dev.holm.chat/argoCD](https://dev.holm.chat/argoCD)
 - Username: `admin`
 - Password: (from secret above)
 

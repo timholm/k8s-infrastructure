@@ -7,7 +7,7 @@ ArgoCD is the GitOps continuous delivery tool that keeps the cluster in sync wit
 | Property | Value |
 |----------|-------|
 | Namespace | `argocd` |
-| URL | [dev.holm.chat/argo](https://dev.holm.chat/argo) |
+| URL | [dev.holm.chat/argoCD](https://dev.holm.chat/argoCD) |
 | Version | v2.9.3 |
 
 ## Architecture
@@ -49,7 +49,7 @@ This allows:
 
 ### Base URL (Path-Based Routing)
 
-ArgoCD is configured to run at `/argo`:
+ArgoCD is configured to run at `/argoCD`:
 
 ```yaml
 # argocd/bootstrap/install.yaml
@@ -58,8 +58,8 @@ kind: ConfigMap
 metadata:
   name: argocd-cm
 data:
-  url: https://dev.holm.chat/argo
-  server.rootpath: /argo
+  url: https://dev.holm.chat/argoCD
+  server.rootpath: /argoCD
 ```
 
 ### RBAC

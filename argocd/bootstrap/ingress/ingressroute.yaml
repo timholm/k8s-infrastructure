@@ -1,6 +1,6 @@
 ---
 # Traefik IngressRoute for ArgoCD
-# Accessible at https://dev.holm.chat/argo/
+# Accessible at https://dev.holm.chat/argoCD/
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
@@ -8,9 +8,10 @@ metadata:
   namespace: argocd
 spec:
   entryPoints:
+    - web
     - websecure
   routes:
-    - match: Host(`dev.holm.chat`) && PathPrefix(`/argo`)
+    - match: Host(`dev.holm.chat`) && PathPrefix(`/argoCD`)
       kind: Rule
       services:
         - name: argocd-server
@@ -21,7 +22,7 @@ spec:
         - name: argocd-stripprefix
         - name: argocd-headers
 ---
-# Strip /argo prefix before forwarding to ArgoCD
+# Strip /argoCD prefix before forwarding to ArgoCD
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
@@ -30,7 +31,7 @@ metadata:
 spec:
   stripPrefix:
     prefixes:
-      - /argo
+      - /argoCD
 ---
 # Headers for ArgoCD
 apiVersion: traefik.io/v1alpha1

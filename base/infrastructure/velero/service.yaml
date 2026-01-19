@@ -1,0 +1,17 @@
+---
+# Velero API service
+apiVersion: v1
+kind: Service
+metadata:
+  name: velero
+  namespace: velero
+  labels:
+    app.kubernetes.io/name: velero
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: velero
+  ports:
+    - name: metrics
+      port: 8085
+      targetPort: metrics
