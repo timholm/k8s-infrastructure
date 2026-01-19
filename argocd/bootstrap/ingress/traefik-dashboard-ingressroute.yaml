@@ -1,10 +1,11 @@
 ---
 # Traefik IngressRoute for Traefik Dashboard
-# Accessible at https://dev.holm.chat/traefik/
+# Accessible at http://<node-ip>:30190/traefik/dashboard/
+# Uses api@internal TraefikService for dashboard access
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: traefik-dashboard
+  name: traefik-dashboard-route
   namespace: kube-system
 spec:
   entryPoints:
@@ -14,8 +15,8 @@ spec:
     - match: PathPrefix(`/traefik`)
       kind: Rule
       services:
-        - name: traefik
-          port: 8080
+        - name: api@internal
+          kind: TraefikService
       middlewares:
         - name: traefik-stripprefix
 ---
