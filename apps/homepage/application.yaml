@@ -39,6 +39,24 @@ spec:
           - key: node.cilium.io/agent-not-ready
             operator: Exists
             effect: NoSchedule
+        dnsPolicy: ClusterFirst
+        dnsConfig:
+          options:
+            - name: ndots
+              value: "2"
+            - name: timeout
+              value: "5"
+            - name: attempts
+              value: "3"
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: NotIn
+                      values:
+                        - openmediavault
         config:
           bookmarks: []
           docker: {}
