@@ -50,17 +50,17 @@ spec:
                   description: GitOps CD
                   href: https://holm.chat/argoCD
                   icon: argocd.svg
-                  siteMonitor: http://argocd-server.argocd:80
+                  siteMonitor: http://argocd-server.argocd.svc.cluster.local:80
               - Argo Workflows:
                   description: Workflow Engine
                   href: https://holm.chat/argo-workflows
                   icon: argo.svg
-                  siteMonitor: http://argo-workflows-server.argo:2746
+                  siteMonitor: http://argo-workflows-server.argo.svc.cluster.local:2746
               - Keycloak:
                   description: Identity Management
                   href: https://holm.chat/auth
                   icon: keycloak.svg
-                  siteMonitor: http://keycloak.keycloak:80
+                  siteMonitor: http://keycloak.keycloak.svc.cluster.local:80
               - KubeView:
                   description: Cluster Visualization
                   href: https://holm.chat/kubeview
@@ -75,15 +75,15 @@ spec:
                   description: Metrics Dashboard
                   href: https://holm.chat/grafana
                   icon: grafana.svg
-                  siteMonitor: http://grafana.monitoring:80
+                  siteMonitor: http://grafana.monitoring.svc.cluster.local:80
               - Uptime Kuma:
                   description: Status Monitoring
                   href: https://uptime.holm.chat/status/holm-chat
                   icon: uptime-kuma.svg
-                  siteMonitor: http://uptime-kuma.monitoring:3001
+                  siteMonitor: http://uptime-kuma.monitoring.svc.cluster.local:3001
                   widget:
                     type: uptimekuma
-                    url: http://uptime-kuma.monitoring:3001
+                    url: http://uptime-kuma.monitoring.svc.cluster.local:3001
                     slug: holm-chat
               - Prometheus:
                   description: Metrics Collection
@@ -93,7 +93,7 @@ spec:
                   description: Error Prioritization
                   href: https://holm.chat/kube-sentinel
                   icon: mdi-shield-alert
-                  siteMonitor: http://kube-sentinel.kube-sentinel:80
+                  siteMonitor: http://kube-sentinel.kube-sentinel.svc.cluster.local:80
             - Applications:
               - Immich:
                   description: Photo Management
@@ -169,7 +169,7 @@ spec:
                 nodes:
                   show: false
             - uptimekuma:
-                url: http://uptime-kuma.monitoring:3001
+                url: http://uptime-kuma.monitoring.svc.cluster.local:3001
                 slug: holm-chat
             - datetime:
                 text_size: l
