@@ -100,10 +100,10 @@ spec:
                   description: Status Monitoring
                   href: https://uptime.holm.chat/status/holm-chat
                   icon: uptime-kuma.svg
-                  siteMonitor: http://uptime-kuma.monitoring.svc.cluster.local:3001
+                  siteMonitor: http://192.168.8.105:3001
                   widget:
                     type: uptimekuma
-                    url: http://uptime-kuma.monitoring.svc.cluster.local:3001
+                    url: http://192.168.8.105:3001
                     slug: holm-chat
               - Prometheus:
                   description: Metrics Collection
@@ -189,7 +189,7 @@ spec:
                 nodes:
                   show: false
             - uptimekuma:
-                url: http://uptime-kuma.monitoring.svc.cluster.local:3001
+                url: http://192.168.8.105:3001
                 slug: holm-chat
             - datetime:
                 text_size: l
