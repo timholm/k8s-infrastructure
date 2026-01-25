@@ -115,8 +115,9 @@ spec:
                   siteMonitor: http://vaultwarden.default.svc.cluster.local:80
               - Odoo:
                   description: ERP & CRM
-                  href: https://holm.chat/odoo
+                  href: https://odoo.holm.chat
                   icon: odoo.svg
+                  siteMonitor: http://odoo.odoo:8069
             - Local Apps:
               - Jellyfin:
                   description: Media Server (Local)
