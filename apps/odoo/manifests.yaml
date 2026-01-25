@@ -202,9 +202,9 @@ metadata:
     gethomepage.dev/enabled: "true"
     gethomepage.dev/name: "Odoo"
     gethomepage.dev/description: "ERP & CRM"
-    gethomepage.dev/group: "Local Apps"
+    gethomepage.dev/group: "Applications"
     gethomepage.dev/icon: "odoo.svg"
-    gethomepage.dev/href: "http://192.168.8.197:30069"
+    gethomepage.dev/href: "https://holm.chat/odoo"
 spec:
   type: NodePort
   ports:
@@ -214,3 +214,29 @@ spec:
     name: http
   selector:
     app: odoo
+---
+# HTTPRoute for Odoo
+# Accessible at https://holm.chat/odoo/
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: odoo
+  namespace: odoo
+spec:
+  parentRefs:
+    - name: main-gateway
+      namespace: envoy-gateway-system
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /odoo
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: odoo
+          port: 8069

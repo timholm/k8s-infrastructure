@@ -99,10 +99,6 @@ spec:
                   description: Photo Management
                   href: https://holm.chat/immich
                   icon: immich.svg
-              - Jellyfin:
-                  description: Media Server
-                  href: https://holm.chat/jellyfin
-                  icon: jellyfin.svg
               - Claude WebUI:
                   description: AI Assistant
                   href: https://holm.chat/claude
@@ -117,11 +113,15 @@ spec:
                   href: https://vault.holm.chat
                   icon: vaultwarden.svg
                   siteMonitor: http://vaultwarden.default.svc.cluster.local:80
+              - Odoo:
+                  description: ERP & CRM
+                  href: https://holm.chat/odoo
+                  icon: odoo.svg
             - Local Apps:
-              - Vaultwarden:
-                  description: Password Manager (Local)
-                  href: http://192.168.8.197:30880
-                  icon: vaultwarden.svg
+              - Jellyfin:
+                  description: Media Server (Local)
+                  href: http://192.168.8.197:30096
+                  icon: jellyfin.svg
               - Immich:
                   description: Photo Management (Local)
                   href: http://192.168.8.197:30283
@@ -134,10 +134,6 @@ spec:
                   description: Household Management
                   href: http://192.168.8.197:30881
                   icon: grocy.svg
-              - Odoo:
-                  description: ERP & CRM
-                  href: http://192.168.8.197:30069
-                  icon: odoo.svg
           settings:
             title: Holm.chat
             theme: dark
@@ -152,10 +148,10 @@ spec:
                   columns: 3
               - Applications:
                   style: row
-                  columns: 4
+                  columns: 5
               - Local Apps:
                   style: row
-                  columns: 5
+                  columns: 4
           widgets:
             - search:
                 provider: custom
