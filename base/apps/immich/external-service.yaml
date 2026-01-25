@@ -3,6 +3,13 @@ kind: Service
 metadata:
   name: immich-external
   namespace: immich
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Immich"
+    gethomepage.dev/description: "Photo Management (Local)"
+    gethomepage.dev/group: "Local Apps"
+    gethomepage.dev/icon: "immich.svg"
+    gethomepage.dev/href: "http://192.168.8.197:30283"
 spec:
   type: NodePort
   selector:

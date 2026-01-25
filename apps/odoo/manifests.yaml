@@ -1,0 +1,216 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: odoo
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: odoo-db-secret
+  namespace: odoo
+type: Opaque
+stringData:
+  POSTGRES_USER: odoo
+  POSTGRES_PASSWORD: odoo
+  POSTGRES_DB: postgres
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: odoo-data
+  namespace: odoo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: odoo-postgres-data
+  namespace: odoo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo-postgres
+  namespace: odoo
+  labels:
+    app: odoo-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo-postgres
+  template:
+    metadata:
+      labels:
+        app: odoo-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+          name: postgres
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: odoo-db-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: odoo-db-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: odoo-db-secret
+              key: POSTGRES_DB
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: odoo-postgres-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: odoo-db
+  namespace: odoo
+  labels:
+    app: odoo-postgres
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+    name: postgres
+  selector:
+    app: odoo-postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  namespace: odoo
+  labels:
+    app: odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      containers:
+      - name: odoo
+        image: odoo:17
+        ports:
+        - containerPort: 8069
+          name: http
+        env:
+        - name: HOST
+          value: odoo-db
+        - name: USER
+          valueFrom:
+            secretKeyRef:
+              name: odoo-db-secret
+              key: POSTGRES_USER
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: odoo-db-secret
+              key: POSTGRES_PASSWORD
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+        volumeMounts:
+        - name: odoo-data
+          mountPath: /var/lib/odoo
+        livenessProbe:
+          httpGet:
+            path: /web/login
+            port: 8069
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /web/login
+            port: 8069
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: odoo-data
+        persistentVolumeClaim:
+          claimName: odoo-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: odoo
+  namespace: odoo
+  labels:
+    app: odoo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8069
+    targetPort: 8069
+    name: http
+  selector:
+    app: odoo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: odoo-nodeport
+  namespace: odoo
+  labels:
+    app: odoo
+  annotations:
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/name: "Odoo"
+    gethomepage.dev/description: "ERP & CRM"
+    gethomepage.dev/group: "Local Apps"
+    gethomepage.dev/icon: "odoo.svg"
+    gethomepage.dev/href: "http://192.168.8.197:30069"
+spec:
+  type: NodePort
+  ports:
+  - port: 8069
+    targetPort: 8069
+    nodePort: 30069
+    name: http
+  selector:
+    app: odoo

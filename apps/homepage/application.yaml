@@ -1,0 +1,187 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homepage
+  namespace: argocd
+spec:
+  destination:
+    namespace: homepage
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: homepage
+    repoURL: https://jameswynn.github.io/helm-charts
+    targetRevision: "*"
+    helm:
+      valuesObject:
+        image:
+          repository: ghcr.io/gethomepage/homepage
+          tag: latest
+        controller:
+          type: deployment
+          replicas: 1
+        enableRbac: true
+        serviceAccount:
+          create: true
+          name: homepage
+        env:
+          - name: HOMEPAGE_ALLOWED_HOSTS
+            value: "holm.chat,localhost"
+        service:
+          main:
+            ports:
+              http:
+                port: 3000
+        ingress:
+          main:
+            enabled: false
+        tolerations:
+          - key: node.cilium.io/agent-not-ready
+            operator: Exists
+            effect: NoSchedule
+        config:
+          bookmarks: []
+          docker: {}
+          kubernetes:
+            mode: cluster
+          services:
+            - Infrastructure:
+              - ArgoCD:
+                  description: GitOps CD
+                  href: https://holm.chat/argoCD
+                  icon: argocd.svg
+                  siteMonitor: http://argocd-server.argocd:80
+              - Argo Workflows:
+                  description: Workflow Engine
+                  href: https://holm.chat/argo-workflows
+                  icon: argo.svg
+                  siteMonitor: http://argo-workflows-server.argo:2746
+              - Keycloak:
+                  description: Identity Management
+                  href: https://holm.chat/auth
+                  icon: keycloak.svg
+                  siteMonitor: http://keycloak.keycloak:80
+              - KubeView:
+                  description: Cluster Visualization
+                  href: https://holm.chat/kubeview
+                  icon: kubernetes.svg
+              - Pi-hole:
+                  description: Network Ad Blocker
+                  href: https://pihole.holm.chat/admin
+                  icon: pi-hole.svg
+                  siteMonitor: http://pihole-web.pihole.svc.cluster.local:80
+            - Monitoring:
+              - Grafana:
+                  description: Metrics Dashboard
+                  href: https://holm.chat/grafana
+                  icon: grafana.svg
+                  siteMonitor: http://grafana.monitoring:80
+              - Uptime Kuma:
+                  description: Status Monitoring
+                  href: https://uptime.holm.chat/status/holm-chat
+                  icon: uptime-kuma.svg
+                  siteMonitor: http://uptime-kuma.monitoring:3001
+                  widget:
+                    type: uptimekuma
+                    url: http://uptime-kuma.monitoring:3001
+                    slug: holm-chat
+              - Prometheus:
+                  description: Metrics Collection
+                  href: https://holm.chat/prometheus
+                  icon: prometheus.svg
+              - Kube Sentinel:
+                  description: Error Prioritization
+                  href: https://holm.chat/kube-sentinel
+                  icon: mdi-shield-alert
+                  siteMonitor: http://kube-sentinel.kube-sentinel:80
+            - Applications:
+              - Immich:
+                  description: Photo Management
+                  href: https://holm.chat/immich
+                  icon: immich.svg
+              - Jellyfin:
+                  description: Media Server
+                  href: https://holm.chat/jellyfin
+                  icon: jellyfin.svg
+              - Claude WebUI:
+                  description: AI Assistant
+                  href: https://holm.chat/claude
+                  icon: si-anthropic
+              - SearXNG:
+                  description: Privacy Search Engine
+                  href: https://search.holm.chat
+                  icon: searxng.svg
+                  siteMonitor: http://searxng.searxng.svc.cluster.local:8080
+              - Vaultwarden:
+                  description: Password Manager
+                  href: https://vault.holm.chat
+                  icon: vaultwarden.svg
+                  siteMonitor: http://vaultwarden.default.svc.cluster.local:80
+            - Local Apps:
+              - Vaultwarden:
+                  description: Password Manager (Local)
+                  href: http://192.168.8.197:30880
+                  icon: vaultwarden.svg
+              - Immich:
+                  description: Photo Management (Local)
+                  href: http://192.168.8.197:30283
+                  icon: immich.svg
+              - YT Archive:
+                  description: YouTube Archiver
+                  href: http://192.168.8.197:30580
+                  icon: youtube.svg
+              - Grocy:
+                  description: Household Management
+                  href: http://192.168.8.197:30881
+                  icon: grocy.svg
+              - Odoo:
+                  description: ERP & CRM
+                  href: http://192.168.8.197:30069
+                  icon: odoo.svg
+          settings:
+            title: Holm.chat
+            theme: dark
+            color: slate
+            headerStyle: clean
+            layout:
+              - Infrastructure:
+                  style: row
+                  columns: 4
+              - Monitoring:
+                  style: row
+                  columns: 3
+              - Applications:
+                  style: row
+                  columns: 4
+              - Local Apps:
+                  style: row
+                  columns: 5
+          widgets:
+            - search:
+                provider: custom
+                url: https://search.holm.chat/search?q=
+                target: _blank
+                showSearchSuggestions: false
+            - kubernetes:
+                cluster:
+                  show: true
+                  cpu: true
+                  memory: true
+                  showLabel: true
+                  label: Holm Cluster
+                nodes:
+                  show: false
+            - uptimekuma:
+                url: http://uptime-kuma.monitoring:3001
+                slug: holm-chat
+            - datetime:
+                text_size: l
+                format:
+                  dateStyle: long
+                  timeStyle: short
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

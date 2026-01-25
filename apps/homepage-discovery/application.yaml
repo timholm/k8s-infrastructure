@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: homepage-discovery
+  namespace: argocd
+spec:
+  destination:
+    namespace: homepage
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: apps/homepage-discovery
+    repoURL: https://github.com/timholm/k8s-infrastructure
+    targetRevision: HEAD
+    directory:
+      include: "manifests.yaml"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
