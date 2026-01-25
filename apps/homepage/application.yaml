@@ -27,6 +27,8 @@ spec:
         env:
           - name: HOMEPAGE_ALLOWED_HOSTS
             value: "holm.chat,localhost"
+          - name: NODE_OPTIONS
+            value: "--dns-result-order=ipv4first"
         service:
           main:
             ports:
