@@ -1,0 +1,29 @@
+---
+# Longhorn Application
+# Distributed block storage system for Kubernetes
+# Provides HA storage for databases and stateful applications
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: longhorn
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/timholm/k8s-infrastructure
+    targetRevision: HEAD
+    path: base/infrastructure/longhorn
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: longhorn-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  # Sync waves to ensure proper ordering
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

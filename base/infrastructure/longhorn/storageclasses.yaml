@@ -1,0 +1,68 @@
+---
+# Default Longhorn StorageClass with 2 replicas
+# Used for production workloads requiring high availability
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+parameters:
+  numberOfReplicas: "2"
+  staleReplicaTimeout: "2880"
+  fromBackup: ""
+  fsType: "ext4"
+  dataLocality: "disabled"
+  replicaAutoBalance: "best-effort"
+
+---
+# Longhorn StorageClass with backup enabled
+# Used for critical data that requires recurring backups
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-backup
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+parameters:
+  numberOfReplicas: "2"
+  staleReplicaTimeout: "2880"
+  fromBackup: ""
+  fsType: "ext4"
+  dataLocality: "disabled"
+  replicaAutoBalance: "best-effort"
+  recurringJobSelector: |
+    [
+      {
+        "name": "daily-backup",
+        "isGroup": false
+      }
+    ]
+
+---
+# Single replica StorageClass for non-critical data
+# Used for temporary storage, caches, or test environments
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: longhorn-single
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+parameters:
+  numberOfReplicas: "1"
+  staleReplicaTimeout: "2880"
+  fromBackup: ""
+  fsType: "ext4"
+  dataLocality: "disabled"
