@@ -9,7 +9,7 @@ metadata:
 spec:
   parentRefs:
     - name: main-gateway
-      namespace: envoy-gateway-system
+      namespace: default
   hostnames:
     - "holm.chat"
   rules:
