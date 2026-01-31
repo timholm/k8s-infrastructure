@@ -55,9 +55,11 @@ spec:
         app: homepage-discovery
     spec:
       serviceAccountName: homepage-discovery
+      nodeSelector:
+        kubernetes.io/hostname: rpi-1
       containers:
         - name: controller
-          image: registry.holm.svc.cluster.local:5000/homepage-discovery:latest
+          image: 10.42.0.192:5000/homepage-discovery:latest
           imagePullPolicy: Always
           env:
             - name: HOMEPAGE_NAMESPACE

@@ -2,24 +2,19 @@ FROM golang:1.22-alpine AS builder
 
 WORKDIR /app
 
-# Copy go mod files
-COPY go.mod go.sum* ./
-RUN go mod download
+# Copy all source files
+COPY . .
 
-# Copy source
-COPY *.go ./
-
-# Build
+# Download dependencies and build
+RUN go mod download || true
 RUN CGO_ENABLED=0 GOOS=linux go build -o homepage-discovery .
 
-# Runtime image
-FROM alpine:3.19
+# Runtime image - use scratch for minimal image, no packages needed
+FROM scratch
 
-RUN apk --no-cache add ca-certificates
-
-WORKDIR /app
-COPY --from=builder /app/homepage-discovery .
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /app/homepage-discovery /homepage-discovery
 
 USER 65534:65534
 
-ENTRYPOINT ["/app/homepage-discovery"]
+ENTRYPOINT ["/homepage-discovery"]

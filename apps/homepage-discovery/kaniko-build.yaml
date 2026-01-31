@@ -5,20 +5,21 @@ metadata:
   namespace: homepage
 spec:
   restartPolicy: Never
+  nodeSelector:
+    kubernetes.io/hostname: rpi-1
   initContainers:
-  - name: clone-repo
-    image: alpine/git:latest
+  - name: wait-for-registry
+    image: busybox
     command:
     - /bin/sh
     - -c
     - |
-      git clone https://github.com/timholm/k8s-infrastructure.git /repo
-      cp -r /repo/apps/homepage-discovery/* /workspace/
-    volumeMounts:
-    - name: workspace
-      mountPath: /workspace
-    - name: repo
-      mountPath: /repo
+      echo "Waiting for registry..."
+      until wget -qO- http://registry.holm.svc.cluster.local:5000/v2/ 2>/dev/null; do
+        echo "Registry not ready, waiting..."
+        sleep 5
+      done
+      echo "Registry is ready!"
   containers:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:latest
@@ -29,10 +30,9 @@ spec:
     - "--insecure"
     - "--skip-tls-verify"
     volumeMounts:
-    - name: workspace
+    - name: source
       mountPath: /workspace
   volumes:
-  - name: workspace
-    emptyDir: {}
-  - name: repo
-    emptyDir: {}
+  - name: source
+    configMap:
+      name: homepage-discovery-src
