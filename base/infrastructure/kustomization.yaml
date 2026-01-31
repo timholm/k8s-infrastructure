@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace
   - network-policies
+  - metallb
   - envoy-gateway
   - argo-rollouts
   - cloudflare-tunnel
