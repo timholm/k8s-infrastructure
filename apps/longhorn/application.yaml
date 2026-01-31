@@ -9,10 +9,95 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://github.com/timholm/k8s-infrastructure
-    targetRevision: HEAD
-    path: base/infrastructure/longhorn
+  sources:
+    # Helm chart source
+    - repoURL: https://charts.longhorn.io
+      chart: longhorn
+      targetRevision: 1.7.2
+      helm:
+        releaseName: longhorn
+        valuesObject:
+          # ARM64 architecture support
+          image:
+            longhorn:
+              engine:
+                repository: longhornio/longhorn-engine
+                tag: v1.7.2
+              manager:
+                repository: longhornio/longhorn-manager
+                tag: v1.7.2
+              ui:
+                repository: longhornio/longhorn-ui
+                tag: v1.7.2
+              instanceManager:
+                repository: longhornio/longhorn-instance-manager
+                tag: v1.7.2
+              shareManager:
+                repository: longhornio/longhorn-share-manager
+                tag: v1.7.2
+              backingImageManager:
+                repository: longhornio/backing-image-manager
+                tag: v1.7.2
+
+          # Default settings
+          defaultSettings:
+            # Set default replica count to 2 for HA
+            defaultReplicaCount: 2
+            # Storage minimal available percentage
+            storageMinimalAvailablePercentage: 10
+            # Enable replica auto-balance
+            replicaAutoBalance: "best-effort"
+            # Orphan auto-deletion
+            orphanAutoDeletion: true
+            # Automatic engine upgrades
+            concurrentAutomaticEngineUpgradePerNodeLimit: 1
+            # Support for ARM64
+            guaranteedInstanceManagerCPU: 5
+            # Backup settings (prepare for MinIO)
+            backupTarget: ""
+            backupTargetCredentialSecret: ""
+
+          # Persistence settings
+          persistence:
+            defaultClass: false
+            defaultClassReplicaCount: 2
+            reclaimPolicy: Retain
+
+          # Ingress disabled (we'll use Envoy Gateway HTTPRoute)
+          ingress:
+            enabled: false
+
+          # Service settings
+          service:
+            ui:
+              type: ClusterIP
+              nodePort: null
+
+          # Enable CSI driver
+          csi:
+            kubeletRootDir: /var/lib/kubelet
+            attacherReplicaCount: 2
+            provisionerReplicaCount: 2
+            resizerReplicaCount: 2
+            snapshotterReplicaCount: 2
+
+          # Resources for ARM64 Raspberry Pi cluster
+          longhornManager:
+            priorityClass: system-cluster-critical
+
+          longhornDriver:
+            priorityClass: system-cluster-critical
+
+          # Enable metrics for Prometheus
+          metrics:
+            serviceMonitor:
+              enabled: false
+
+    # Additional manifests (StorageClasses and HTTPRoute)
+    - repoURL: https://github.com/timholm/k8s-infrastructure
+      targetRevision: HEAD
+      path: base/infrastructure/longhorn/manifests
+
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
@@ -23,7 +108,3 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
-  # Sync waves to ensure proper ordering
-  syncPolicy:
-    syncOptions:
-      - CreateNamespace=true
