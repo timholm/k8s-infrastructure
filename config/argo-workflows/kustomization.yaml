@@ -9,3 +9,7 @@ resources:
   - namespace.yaml
   - service-nodeport.yaml
   # Note: Ingress routing is now handled by Envoy Gateway HTTPRoutes
+
+# Patch argo-server to run in HTTP mode (not HTTPS) for gateway integration
+patches:
+  - path: argo-server-patch.yaml
